@@ -29,10 +29,7 @@ def main():
             if choice == 1:
                 prefix = prefix_config()
             elif choice == 2:
-                if not prefix:
-                    print("Vous devez configurer le préfixe avant cette étape !")
-                else:
-                    folder_path, mode = renaming_config(prefix)
+                folder_path, mode = renaming_config()
             elif choice == 3:
                 if not prefix:
                     print("Vous devez configurer le préfixe avant cette étape !")
@@ -71,7 +68,7 @@ def prefix_config():
         satisfied = input("Êtes-vous satisfait ? (Y/n) ")
     return prefix
 
-def renaming_config(prefix) -> None:
+def renaming_config() -> None:
     print("====== Configuration du renommage =======")
     path = input("Chemin du répertoire : ")
     if os.path.exists(path):
