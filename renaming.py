@@ -27,8 +27,10 @@ def main():
 
 
             if choice == 1:
+                print("====== Configuration du préfixe =======")
                 prefix = prefix_config()
             elif choice == 2:
+                print("====== Configuration du renommage =======")
                 folder_path, mode = renaming_config()
             elif choice == 3:
                 if not prefix:
@@ -56,7 +58,6 @@ def main():
 def prefix_config():
     satisfied = 'n'
     while satisfied == 'n':
-        print("====== Configuration du préfixe =======")
         print("Etablissement du préfixe sous la forme: \n AAMMJJ EVENT_Name_Surname-number")
         surname = input("Votre prénom : ")
         name = input("Votre nom : ")
@@ -69,16 +70,17 @@ def prefix_config():
     return prefix
 
 def renaming_config() -> None:
-    print("====== Configuration du renommage =======")
     path = input("Chemin du répertoire : ")
     if os.path.exists(path):
         if os.path.isdir(path):
             mode = choose_mode()
             return path, mode
         else:
-            raise PathNotDirExcpetion(f"Erreur: le chemin {path} doit être un répertoire.")
+            print(f"Erreur: le chemin {path} doit être un répertoire.")
+            return renaming_config()
     else:
-        raise PathNotFoundException(f"Erreur: le chemin {path} n'est pas trouvé.")
+        print(f"Erreur: le chemin {path} n'est pas trouvé.")
+        return renaming_config()
 
 def do_simulation(prefix, folder_path, mode) -> bool:
     print("====== Simulation ======")
@@ -89,9 +91,11 @@ def do_simulation(prefix, folder_path, mode) -> bool:
 def choose_mode():
     mode = input("Comment voulez-vous renommer vos photos ? (date/name) ")
     if mode.casefold() != "date" and mode.casefold() != "name":
-        raise ModeException(f"Le mode {mode} n'est pas correct.")
+        print(f"Le mode {mode} n'est pas correct.")
+        choose_mode()
     elif not mode:
-            raise ModeException("Vous devez selectionner un mode !")
+            print("Vous devez selectionner un mode !")
+            choose_mode()
     return mode
             
 
