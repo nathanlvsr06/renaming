@@ -16,6 +16,7 @@ def main():
         print("")
         print("====== Renaming ======")
         print("")
+        print("0/ Effectuer une copie des originaux ")
         print("1/ Configurer le préfixe")
         print("2/ Configurer le renommage")
         print("3/ Simuler")
@@ -25,8 +26,9 @@ def main():
         try:
             choice = int(input())
 
-
-            if choice == 1:
+            if choice == 0:
+                print("Option pas disponible")
+            elif choice == 1:
                 print("====== Configuration du préfixe =======")
                 prefix = prefix_config()
             elif choice == 2:
