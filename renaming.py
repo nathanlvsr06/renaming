@@ -20,7 +20,7 @@ def main():
     while True:
 
         print("")
-        print("0/ Effectuer une copie des fichiers originaux ")
+        print("0/ Copier les fichiers originaux ")
         print("1/ Configurer le préfixe")
         print("2/ Configurer le renommage")
         print("3/ Simuler")
@@ -31,6 +31,8 @@ def main():
             choice = int(input())
 
             if choice == 0:
+                print("")
+                print("====== Copie des fichiers originaux ======")
                 folder_path = copy(folder_path)
             elif choice == 1:
                 print("")
@@ -57,6 +59,8 @@ def main():
                 else:
                     ready = input("Êtes-vous prêt ? (y/N) ")
                     if ready.casefold() == 'y':
+                        print("Renommage en cours...")
+                        sleep(2)
                         RenameImages(prefix, folder_path, mode)
             elif choice == 5:
                 return
@@ -112,7 +116,6 @@ def choose_mode():
 
 def copy(origin_path):
     if not origin_path:
-        print("Vous n'avez pas encore configuré le renommage")
         origin_path = input("Où se trouve vos fichiers ? (chemin vers le répertoire) ")
 
     copy_path = input("Vers quel dossier (existant ou inexistant) voulez-vous copier vos fichiers ? ")
