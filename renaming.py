@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 
+import os
+import shutil
+from time import sleep
+
 from rename_images import RenameImages
 from prefix import Prefix
-import os
-from time import sleep
 
 def main():
 
@@ -11,12 +13,14 @@ def main():
     folder_path = None
     mode = None
 
+    print("\n")
+    print("======================== Renaming ========================")
+    print("")
+
     while True:
 
         print("")
-        print("====== Renaming ======")
-        print("")
-        print("0/ Effectuer une copie des originaux ")
+        print("0/ Effectuer une copie des fichiers originaux ")
         print("1/ Configurer le préfixe")
         print("2/ Configurer le renommage")
         print("3/ Simuler")
@@ -27,19 +31,23 @@ def main():
             choice = int(input())
 
             if choice == 0:
-                print("Option pas disponible")
+                folder_path = copy(folder_path)
             elif choice == 1:
+                print("")
                 print("====== Configuration du préfixe =======")
                 prefix = prefix_config()
             elif choice == 2:
+                print("")
                 print("====== Configuration du renommage =======")
-                folder_path, mode = renaming_config()
+                folder_path, mode = renaming_config(folder_path)
             elif choice == 3:
                 if not prefix:
                     print("Vous devez configurer le préfixe avant cette étape !")
                 elif not mode and folder_path:
                     print("Vous devez configurer le renommage avant cette étape !")
                 else:
+                    print("")
+                    print("====== Simulation ======")
                     do_simulation(prefix, folder_path, mode)
             elif choice == 4:
                 if not prefix:
@@ -56,6 +64,8 @@ def main():
                 print("Choisisser une valeur entre 1 et 5")
         except ValueError:
             print("Saisie incorrecte")
+        except KeyboardInterrupt:
+            return
 
 def prefix_config():
     satisfied = 'n'
@@ -71,8 +81,9 @@ def prefix_config():
         satisfied = input("Êtes-vous satisfait ? (Y/n) ")
     return prefix
 
-def renaming_config() -> None:
-    path = input("Chemin du répertoire : ")
+def renaming_config(path) -> None:
+    if not path:
+        path = input("Chemin du répertoire : ")
     if os.path.exists(path):
         if os.path.isdir(path):
             mode = choose_mode()
@@ -85,7 +96,6 @@ def renaming_config() -> None:
         return renaming_config()
 
 def do_simulation(prefix, folder_path, mode) -> bool:
-    print("====== Simulation ======")
     sleep(1)
     RenameImages(prefix, folder_path, mode, True)
     return
@@ -93,22 +103,38 @@ def do_simulation(prefix, folder_path, mode) -> bool:
 def choose_mode():
     mode = input("Comment voulez-vous renommer vos photos ? (date/name) ")
     if mode.casefold() != "date" and mode.casefold() != "name":
-        print(f"Le mode {mode} n'est pas correct.")
+        print(f"Le mode {mode} n'est pas correct. Veuillez choisir entre date et name.")
         choose_mode()
     elif not mode:
             print("Vous devez selectionner un mode !")
             choose_mode()
     return mode
-            
 
-class PathNotFoundException(Exception):
-    ''' Exception levée lorsqu'un chemin n'est pas trouvé. '''
+def copy(origin_path):
+    if not origin_path:
+        print("Vous n'avez pas encore configuré le renommage")
+        origin_path = input("Où se trouve vos fichiers ? (chemin vers le répertoire) ")
 
-class PathNotDirExcpetion(Exception):
-    ''' Exception levée lorsqu'un chemin n'est pas un répertoire. '''
+    copy_path = input("Vers quel dossier (existant ou inexistant) voulez-vous copier vos fichiers ? ")
+    if os.path.exists(copy_path):
+        copy_files(origin_path, copy_path)
+    else:
+        create_folder = input("Dossier inexistant, voulez vous créer ce dossier ? (Y/n) ")
+        if create_folder.casefold() == 'n':
+            copy()
+        else:
+            os.makedirs(copy_path)
+            copy_files(origin_path, copy_path)
+    return origin_path
 
-class ModeException(Exception):
-    ''' Exception levée lorsque le mode n'est pas trouvée ou qu'il est faux. '''
+def copy_files(source_dir: os.path, destination_dir: os.path) -> None:
+    for filename in os.listdir(source_dir):
+        source_path = os.path.join(source_dir, filename)
+        destination_path = os.path.join(destination_dir, filename)
+        
+        if os.path.isfile(source_path):  
+            shutil.copy2(source_path, destination_path)
+
 
 if __name__ == '__main__':
     main()
